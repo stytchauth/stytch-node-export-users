@@ -6,7 +6,7 @@ This script allows you to retrieve a full export of your Stytch Consumer User da
 
 ## Warning
 
-Your User export may contain sensitive PII (Personally Identifying Information), so be sure to store and transfer it securely. 
+Your User export will contain sensitive PII (Personally Identifying Information), so be sure to store and transfer it securely. 
 
 ## Setup
 
@@ -14,7 +14,7 @@ Your User export may contain sensitive PII (Personally Identifying Information),
 2. In your terminal, clone this repository and install dependencies:
 
 ```
-git clone ...
+git clone https://github.com/stytchauth/stytch-node-export-users.git
 cd stytch-node-export-users
 # Install dependencies using npm
 npm i
