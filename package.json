@@ -1,0 +1,16 @@
+{
+  "name": "stytch-node-export-users",
+  "version": "1.0.0",
+  "description": "A script that retireves all User data for a Stytch project.",
+  "main": "export-users.js",
+  "scripts": {
+    "export-json": "node --env-file=.env.local export-users.js json",
+    "export-csv": "node --env-file=.env.local export-users.js csv"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "json2csv": "^6.0.0-alpha.2",
+    "stytch": "^11.7.0"
+  }
+}
