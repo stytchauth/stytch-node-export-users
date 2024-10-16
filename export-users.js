@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { Parser } = require("json2csv");
+const { Parser } = require("@json2csv/plainjs");
 const process = require("process");
 
 const stytch = require("stytch");
@@ -45,8 +45,8 @@ retrieveUsers()
         "crypto_wallets",
         "password",
       ];
-      const json2csvParser = new Parser({ fields });
-      const csv = json2csvParser.parse(resp);
+      const jsonParser = new Parser({ fields });
+      const csv = jsonParser.parse(resp);
 
       fs.writeFileSync("users.csv", csv, "utf8");
       console.log("User data has been written to users.csv");

@@ -10,7 +10,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "json2csv": "^6.0.0-alpha.2",
+    "@json2csv/plainjs": "^7.0.6",
     "stytch": "^11.7.0"
   }
 }
