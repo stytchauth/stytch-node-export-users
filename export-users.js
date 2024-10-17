@@ -16,42 +16,67 @@ async function retrieveUsers() {
 
   const iter = stytchClient.users.searchAll(params);
 
-  let allUsers = [];
-  for await (const users of iter) {
-    allUsers = allUsers.concat(users);
+  if (process.argv[2] == "json") {
+    fs.writeFileSync("users.json", ""); // Clear the users.json file if it exists
+
+    const jsonStream = fs.createWriteStream("users.json", { flags: "a" }); // Open JSON file in append mode
+    jsonStream.write("["); // Start JSON array
+    let firstBatch = true;
+
+    let pageNumber = 1;
+    for await (const users of iter) {
+      console.log("Page: " + pageNumber);
+      pageNumber++;
+
+      if (!firstBatch) {
+        jsonStream.write(","); // Add a comma between batches
+      }
+      jsonStream.write(JSON.stringify(users, null, 2).slice(1, -1)); // Remove outer array brackets from each batch
+      firstBatch = false;
+    }
+
+    jsonStream.write("]"); // Close JSON array
+    jsonStream.end();
+    console.log("User data has been successfully exported to users.json");
+
+  } else if (process.argv[2] == "csv") {
+    fs.writeFileSync("users.csv", ""); // Clear the existing users.csv file if it exists
+
+    // Customize these fields as desired
+    const fields = [
+      "user_id",
+      "status",
+      "created_at",
+      "name",
+      "emails",
+      "phone_numbers",
+      "trusted_metadata",
+      "untrusted_metadata",
+      "providers",
+      "webauthn_registrations",
+      "biometric_registrations",
+      "totps",
+      "crypto_wallets",
+      "password",
+    ];
+    const jsonParser = new Parser({ fields });
+
+    const csvStream = fs.createWriteStream("users.csv", { flags: "a" }); // Open CSV file in append mode
+
+    let pageNumber = 1;
+    for await (const users of iter) {
+      console.log("Page: " + pageNumber);
+      pageNumber++;
+
+      const csv = jsonParser.parse(users);
+      csvStream.write(csv + "\n"); // Append each batch to the CSV file
+    }
+
+    csvStream.end();
+    console.log("User data has been successfully exported to users.csv");
   }
-  return allUsers;
 }
 
-retrieveUsers()
-  .then((resp) => {
-    if (process.argv[2] == "json") {
-      fs.writeFileSync("users.json", JSON.stringify(resp, null, 2), "utf8");
-      console.log("User data has been written to users.json");
-    } else if (process.argv[2] == "csv") {
-      const fields = [
-        "user_id",
-        "status",
-        "created_at",
-        "name",
-        "emails",
-        "phone_numbers",
-        "trusted_metadata",
-        "untrusted_metadata",
-        "providers",
-        "webauthn_registrations",
-        "biometric_registrations",
-        "totps",
-        "crypto_wallets",
-        "password",
-      ];
-      const jsonParser = new Parser({ fields });
-      const csv = jsonParser.parse(resp);
-
-      fs.writeFileSync("users.csv", csv, "utf8");
-      console.log("User data has been written to users.csv");
-    }
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+retrieveUsers().catch((err) => {
+  console.log(err);
+});
